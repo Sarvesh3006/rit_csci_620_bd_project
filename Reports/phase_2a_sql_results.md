@@ -1,6 +1,6 @@
 # Phase II(a) — SQL Queries, Indexes and Timings
 
-Queries: `phase2_queries.sql` (same folder).
+Queries: [phase2_queries.sql](../Phase%201/Create%20and%20Load%20Dataset/phase2_queries.sql).
 Database: `amazon_electronics_reviews`, MySQL 8.0.46 Community Server, run in MySQL Workbench on a local Windows laptop.
 Each time below is the Workbench "Duration" of a single run.
 

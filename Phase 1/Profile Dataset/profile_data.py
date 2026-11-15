@@ -57,7 +57,7 @@ def profile(path, label):
         if PROFILE_LIMIT is not None and scanned >= PROFILE_LIMIT:
             break
 
-    folder = Path("reports")
+    folder = Path("Reports")
     folder.mkdir(exist_ok=True)
     output = folder / f"{label}_fields_phase_1.csv"
 
