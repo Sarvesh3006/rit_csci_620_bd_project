@@ -1,8 +1,5 @@
 # Phase II(a) — SQL Queries, Indexes and Timings
 
-Queries: [sql_queries.sql](../Phase%202%20and%203/Sql/Queries/sql_queries.sql).
-Database: `amazon_electronics_reviews`.
-
 ## Functional Dependencies
 
 The primary keys in MySQL enforce these dependencies:

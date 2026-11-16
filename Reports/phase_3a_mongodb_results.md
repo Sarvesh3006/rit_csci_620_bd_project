@@ -1,8 +1,5 @@
 # Phase III(a) — MongoDB Aggregation Queries, Indexes and Timings
 
-Database: `amazon_electronics_reviews`. Collections: `products` and `reviews`.
-Code: [mongodb_queries.js](../Phase%202%20and%203/Mongodb/Queries/mongodb_queries.js). Model: [Phase II(b)](phase_2b_mongodb_report.md). Requirements: [project PDF, Phase III(a)](../CSCI-620%20Project.pdf).
-
 ## Query Design
 
 | Query | Selection and calculation | Pipeline stages |

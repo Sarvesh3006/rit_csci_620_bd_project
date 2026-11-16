@@ -1,7 +1,5 @@
 # Phase III(b) — MySQL and MongoDB Performance Comparison
 
-Workload: five equivalent queries over Amazon Reviews 2023 Electronics. Code: [SQL](../Phase%202%20and%203/Sql/Queries/sql_queries.sql) and [MongoDB](../Phase%202%20and%203/Mongodb/Queries/mongodb_queries.js). Detailed results: [Phase II(a)](phase_2a_sql_results.md) and [Phase III(a)](phase_3a_mongodb_results.md). Requirement: [project PDF, Phase III(b)](../CSCI-620%20Project.pdf).
-
 ## Result Validation
 
 Both implementations use matching thresholds, UTC years, and rounding rules. SQL joins to `products.parent_asin`; MongoDB joins to `products._id`. Category expansion uses SQL `JSON_TABLE` and MongoDB `$unwind`.
