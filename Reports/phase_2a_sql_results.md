@@ -5,32 +5,28 @@ Database: `amazon_electronics_reviews`.
 
 ## Functional Dependencies
 
-The primary keys in [schema.sql](../Phase%201/Create%20and%20Load%20Dataset/schema.sql) enforce these dependencies:
+The primary keys in MySQL enforce these dependencies:
 
 | Table | Dependency |
 | --- | --- |
 | `products` | `parent_asin` → `title`, `average_rating`, `rating_number`, `price`, `main_category`, `store`, `categories`, `description`, `features`, `details` |
 | `reviews` | `(source_id, source_line)` → `parent_asin`, `user_id`, `asin`, `rating`, `title`, `review_text`, `reviewed_at`, `helpful_vote`, `verified_purchase` |
 
-Each key identifies one stored row; duplicate-key imports retain the existing row. Review line numbers can overlap across sources, so `source_line` alone is not the intended global key. A product key determines its metadata, not individual review ratings or text.
+Each primary key uniquely identifies a row, and importing duplicates doesn't change that row. Reviewers use `(source_id, source_line)` since the same line number can appear in multiple sources.
 
 ## Normalization
 
 ### First Normal Form (1NF)
 
-Scalar columns contain single values. The JSON fields retain lists (`categories`, `description`, `features`) and an object (`details`), so the complete model does not follow traditional flattened 1NF. We preserve this product metadata together; Q5 expands categories with `JSON_TABLE`. A flattened alternative would use child tables linked by `parent_asin`, with entry positions preserving array order and duplicates.
+Product JSON fields preserve lists and objects rather than a traditional flat structure. Separate child tables could flatten this metadata, but we retain its source structure and use `JSON_TABLE` to expand categories in Q5.
 
 ### Second Normal Form (2NF)
 
-Under the stated dependencies, the scalar relations meet 2NF. The product key is a single attribute. Review attributes depend on the full `(source_id, source_line)` identity; neither component alone identifies a review across sources. No partial dependency is defined. This assessment does not resolve the nested JSON fields' 1NF limitation.
+The product key is a single column. Review attributes depend on the full `(source_id, source_line)` key because line numbers can repeat across sources.
 
-### Third Normal Form (3NF) and BCNF
+### Third Normal Form (3NF)
 
-Separating product metadata avoids the transitive dependency `review key` → `parent_asin` → `product metadata` within reviews. Under the documented dependencies, the scalar product relation meets 3NF and BCNF because its determinant is the product key.
-
-If the sample-observed `asin` → `parent_asin` holds globally, reviews contain `review key` → `asin` → `parent_asin`. Under the declared keys, this violates 3NF and BCNF: `asin` is not a review key, and `parent_asin` is non-prime. A separate ASIN-to-parent table would remove that redundancy. The current model retains both identifiers for direct product joins.
-
-We do not claim full-schema BCNF: nested JSON and the potential ASIN dependency qualify the normalization assessment.
+Product metadata is stored once in `products` and referenced by reviews through `parent_asin`. This avoids repeating product titles, prices, and stores in review rows and reduces inconsistent updates. These choices improve normalization.
 
 ## Timings Before and After Indexing
 
