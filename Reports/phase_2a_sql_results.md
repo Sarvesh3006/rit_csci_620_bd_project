@@ -14,13 +14,6 @@ The primary keys in [schema.sql](../Phase%201/Create%20and%20Load%20Dataset/sche
 
 Each key identifies one stored row; duplicate-key imports retain the existing row. Review line numbers can overlap across sources, so `source_line` alone is not the intended global key. A product key determines its metadata, not individual review ratings or text.
 
-We checked the first **100,000 nonblank review source records** using Phase I text cleaning. All had usable `asin` and `parent_asin` values; missing identifiers were excluded from each check.
-
-| Relationship | Sample result | Conclusion |
-| --- | --- | --- |
-| `asin` → `parent_asin` | 66,260 distinct ASINs; zero mapped to multiple parents. | Holds in the sample; neither schema-enforced nor verified across the full dataset. |
-| `user_id` → `parent_asin` | 10,714 of 15,322 distinct users reviewed multiple parent products. | Does not hold. |
-
 ## Normalization
 
 ### First Normal Form (1NF)
@@ -50,8 +43,6 @@ We do not claim full-schema BCNF: nested JSON and the potential ASIN dependency 
 | Q5 | Which sub-categories disappoint buyers the most? | `idx_products_rating_number (rating_number, average_rating)` | 34.152 s | 32.561 s | 1.05× |
 
 ## Index Build Times
-
-Source: [measured index-build times](sql_results/after_indexes/index_build_times.csv). All five indexes were created during this run.
 
 | Index | Table | Build time |
 | --- | --- | ---: |

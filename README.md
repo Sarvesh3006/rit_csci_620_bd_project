@@ -22,8 +22,6 @@ The requirements are defined in [CSCI-620 Project.pdf](CSCI-620%20Project.pdf).
 | III(a) | Implement five MongoDB aggregation queries using document features. Q1 includes `$match`, `$group`, `$project`, and `$sort`; Q3 uses `$lookup` and joined sub-documents; Q5 processes category arrays with `$unwind`. | [MongoDB queries and indexes](Phase%202%20and%203/Mongodb/Queries/mongodb_queries.js), [report](Reports/phase_3a_mongodb_results.md) |
 | III(b) | Compare equivalent SQL and MongoDB workloads. We compare their outputs, before/after query times, and index-build times. All five exported results match after numeric and Boolean formatting is normalized. | [Comparison report](Reports/phase_3b_performance_comparison.md), [SQL timings](Reports/sql_results/comparison.csv), [MongoDB timings](Reports/mongodb_results/comparison.csv) |
 
-The PDF also requires a 15–20 minute final presentation. The files above cover the written reports and implementation.
-
 ## Where Things Are
 
 ```text
