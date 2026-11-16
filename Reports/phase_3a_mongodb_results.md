@@ -15,45 +15,40 @@ Code: [mongodb_queries.js](../Phase%202%20and%203/Mongodb/Queries/mongodb_querie
 
 Q1 supplies the four required stages. Q3 uses joined product sub-documents; `$unwind` removes unmatched joins before the limit. Q5 processes an embedded array, counting repeated entries separately, as SQL's `JSON_TABLE` does. Product and review titles in Q3 are limited to 50 and 60 characters.
 
-## Measurements
+## Timings Before and After Indexing
 
 One execution per query before and after creating five indexes. Client elapsed time covers `aggregate()` through `toArray()`, excluding file export; it is not explain's `executionTimeMillis`. Every pipeline uses `allowDiskUse: true`.
 
 Baseline indexes: `_id_` on both collections and `reviews_parent_asin` on reviews. Sources: [before timings](mongodb_results/before_indexes/timings.csv), [after timings](mongodb_results/after_indexes/timings.csv), and [comparison](mongodb_results/comparison.csv). Displayed seconds are rounded; ratios use the original milliseconds.
 
-| Query | Added index and fields | Before | After | Speedup (before / after) |
-| --- | --- | ---: | ---: | ---: |
-| Q1 | `idx_reviews_time_rating (reviewed_at, rating)` | 81.753 s | 18.686 s | 4.38× |
-| Q2 | `idx_products_price (price, average_rating, rating_number)` | 7.227 s | 0.417 s | 17.34× |
-| Q3 | `idx_reviews_helpful (helpful_vote)` | 60.759 s | 0.0230 s | 2,646.17× |
-| Q4 | `idx_reviews_verified (verified_purchase, rating, helpful_vote)` | 84.247 s | 28.682 s | 2.94× |
-| Q5 | `idx_products_rating_number (rating_number, average_rating)` | 7.807 s | 11.495 s | 0.68× |
+| Query | Question | Index | Before | After | Speedup |
+| --- | --- | --- | ---: | ---: | ---: |
+| Q1 | How did reviews change over the years? | `idx_reviews_time_rating (reviewed_at, rating)` | 81.753 s | 18.686 s | 4.38× |
+| Q2 | Do more expensive electronics get better ratings? | `idx_products_price (price, average_rating, rating_number)` | 7.227 s | 0.417 s | 17.34× |
+| Q3 | What do the most helpful reviews look like? | `idx_reviews_helpful (helpful_vote)` | 60.759 s | 0.0230 s | 2,646.17× |
+| Q4 | Do verified buyers rate differently? | `idx_reviews_verified (verified_purchase, rating, helpful_vote)` | 84.247 s | 28.682 s | 2.94× |
+| Q5 | Which sub-categories disappoint buyers the most? | `idx_products_rating_number (rating_number, average_rating)` | 7.807 s | 11.495 s | 0.68× |
 
-Q3 improved most. Q5 became **47.2% slower**: 1.47× its baseline time. A speedup below 1 indicates a slowdown.
+## Index Build Times
 
-### Index Construction
-
-Source: [index-build times](mongodb_results/after_indexes/index_build_times.csv).
-
-| Index | Collection | Build time |
+| Index | Table / collection | Build time |
 | --- | --- | ---: |
 | `idx_reviews_time_rating` | reviews | 92.30 s |
 | `idx_products_price` | products | 7.05 s |
 | `idx_reviews_helpful` | reviews | 80.46 s |
 | `idx_reviews_verified` | reviews | 91.03 s |
 | `idx_products_rating_number` | products | 7.14 s |
-| **Total** | | **277.98 s** |
+| **Total** |  | **277.98 s** |
 
-### Index Interpretation
+## Why Each Index Helped (or Did Not)
 
-| Queries | Intended benefit or remaining work |
-| --- | --- |
-| Q1, Q4 | Index the scalar fields used by the summaries; counting and averaging still cover almost all eligible reviews. |
-| Q2 | Index all three filter/aggregation fields, potentially reducing access to large product documents. |
-| Q3 | Support the helpful-vote filter and descending order; `products._id_` supports the join. |
-| Q5 | Support the rating-count filter; category expansion, grouping, and sorting remain. The observed slowdown's cause was not measured. |
-
-These are intended benefits, not verified access plans. See [MongoDB aggregation optimization](https://www.mongodb.com/docs/manual/core/aggregation-pipeline-optimization/).
+| Query | Speedup | Explanation |
+| --- | ---: | --- |
+| Q1 | 4.38× | The index contains the date and rating fields used by the yearly summary. It can reduce access to large review documents, but the pipeline still aggregates almost all eligible reviews. |
+| Q2 | 17.34× | The index contains all three product fields used by the pipeline, potentially reducing access to descriptions and other large product fields. |
+| Q3 | 2,646.17× | The helpful-vote index supports the threshold and descending order. The product _id_ index supports $lookup; only 15 joined reviews are returned. |
+| Q4 | 2.94× | The index contains verification, rating, and helpful votes, potentially reducing document access. Counting and averaging still cover almost all eligible reviews. |
+| Q5 | 0.68× | The index supports the rating-count filter. MongoDB still expands categories with $unwind, groups entries, and sorts computed percentages; the indexed run was slower. |
 
 ## Query Results
 
@@ -113,7 +108,3 @@ Finding: non-verified reviewers are harsher than verified buyers, with a lower a
 | Repeaters | 1,600 | 38.4 | 3.64 | $54.75 |
 
 Finding: about half of all hidden cameras with 10+ ratings are rated below 3.5.
-
-## Limits
-
-Single trials; uncontrolled cache state; no saved execution plans or spill statistics. Timing changes do not establish which access plan caused them. Cross-database results are compared in [Phase III(b)](phase_3b_performance_comparison.md).

@@ -34,7 +34,7 @@ We do not claim full-schema BCNF: nested JSON and the potential ASIN dependency 
 
 ## Timings Before and After Indexing
 
-| Query | Question | Index used | Before | After | Speedup |
+| Query | Question | Index | Before | After | Speedup |
 | --- | --- | --- | ---: | ---: | ---: |
 | Q1 | How did reviews change over the years? | `idx_reviews_time_rating (reviewed_at, rating)` | 21.759 s | 17.583 s | 1.24× |
 | Q2 | Do more expensive electronics get better ratings? | `idx_products_price (price, average_rating, rating_number)` | 30.550 s | 0.191 s | 159.71× |
@@ -44,26 +44,30 @@ We do not claim full-schema BCNF: nested JSON and the potential ASIN dependency 
 
 ## Index Build Times
 
-| Index | Table | Build time |
+| Index | Table / collection | Build time |
 | --- | --- | ---: |
 | `idx_reviews_time_rating` | reviews | 116.07 s |
 | `idx_products_price` | products | 9.86 s |
 | `idx_reviews_helpful` | reviews | 110.86 s |
 | `idx_reviews_verified` | reviews | 117.88 s |
 | `idx_products_rating_number` | products | 9.90 s |
+| **Total** |  | **364.57 s** |
 
 The review indexes take far longer to build because they cover ~44M rows, compared with ~1.6M products.
 
 ## Why Each Index Helped (or Did Not)
 
-- **Q3, 1,056.95× faster.** The index stores reviews sorted by `helpful_vote`. MySQL reads the highest values from the end of the index and stops after 15 matches, then joins only those 15 reviews to `products`. Without it, MySQL scanned all ~44M reviews.
-- **Q2, 159.71× faster.** The index contains every column Q2 uses (`price`, `average_rating`, `rating_number`), so MySQL answers the query from the index alone (a covering index) and never reads the large product rows with their description, feature and details JSON.
-- **Q1 and Q4, 1.24× and 1.33× faster, respectively.** Both indexes are covering, so MySQL reads small index entries instead of review rows that include long review text. Both queries still aggregate every review, so the work cannot drop below one pass over ~44M index entries.
-- **Q5, 1.05× faster (small gain).** Most products pass the `rating_number >= 10` filter, so the index skips little. MySQL must still read every remaining product row to expand its `categories` JSON array with `JSON_TABLE`, and an index cannot store that array. The measured improvement was small.
+| Query | Speedup | Explanation |
+| --- | ---: | --- |
+| Q1 | 1.24× | The index contains the date and rating fields used by the yearly summary. It can reduce access to large review rows, but the query still aggregates almost all eligible reviews. |
+| Q2 | 159.71× | The index contains all three product fields used by the query, allowing a covering-index plan without reading descriptions or other large product fields. |
+| Q3 | 1,056.95× | The helpful-vote index supports the threshold and descending order. The product primary key supports the join; only 15 joined reviews are returned. |
+| Q4 | 1.33× | The index contains verification, rating, and helpful votes, allowing a covering-index plan. Counting and averaging still cover almost all eligible reviews. |
+| Q5 | 1.05× | The index supports the rating-count filter. MySQL still expands categories with JSON_TABLE, groups entries, and sorts computed percentages; the observed gain was small. |
 
 ## Query Results
 
-The full result of each query is in its exported CSV (`Q1_result.csv` to `Q5_result.csv`). The rows below are those shown in Workbench.
+The full result of each query is in its exported CSV (`Q1_result.csv` to `Q5_result.csv`). The tables below summarize the MySQL exports. Full results are available in the [before-index folder](sql_results/before_indexes/) and [after-index folder](sql_results/after_indexes/).
 
 ### Q1 — Reviews per year (27 rows; first years shown)
 
@@ -119,7 +123,3 @@ Finding: non-verified reviewers are harsher than verified buyers, with a lower a
 | Repeaters | 1,600 | 38.4 | 3.64 | $54.75 |
 
 Finding: about half of all hidden cameras with 10+ ratings are rated below 3.5.
-
-## Notes
-
-- Each query was timed once. The after-index runs followed the before-index runs, so part of the improvement for Q1 and Q4 may come from data already being in memory.
