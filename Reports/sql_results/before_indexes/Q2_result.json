@@ -1,0 +1,30 @@
+[
+  {
+    "price_range": "1. Under $25",
+    "total_products": 182113,
+    "avg_rating": "4.27",
+    "pct_low_rated": "4.5",
+    "avg_ratings_per_product": "519"
+  },
+  {
+    "price_range": "2. $25 - $99",
+    "total_products": 97703,
+    "avg_rating": "4.19",
+    "pct_low_rated": "6.7",
+    "avg_ratings_per_product": "566"
+  },
+  {
+    "price_range": "3. $100 - $499",
+    "total_products": 45074,
+    "avg_rating": "4.16",
+    "pct_low_rated": "7.4",
+    "avg_ratings_per_product": "410"
+  },
+  {
+    "price_range": "4. $500 and up",
+    "total_products": 10682,
+    "avg_rating": "4.20",
+    "pct_low_rated": "6.1",
+    "avg_ratings_per_product": "167"
+  }
+]

@@ -1,37 +1,82 @@
 # Phase II(a) — SQL Queries, Indexes and Timings
 
-Queries: [phase2_queries.sql](../Phase%201/Create%20and%20Load%20Dataset/phase2_queries.sql).
-Database: `amazon_electronics_reviews`, MySQL 8.0.46 Community Server, run in MySQL Workbench on a local Windows laptop.
-Each time below is the Workbench "Duration" of a single run.
+Queries: [sql_queries.sql](../Phase%202%20and%203/Sql/Queries/sql_queries.sql).
+Database: `amazon_electronics_reviews`.
+
+## Functional Dependencies
+
+The Phase I model separates product metadata from individual reviews. A functional dependency means that one value, or combination of values, determines another value within a table.
+
+| Table | Dependency | Explanation |
+| --- | --- | --- |
+| `products` | `parent_asin` → `title`, `average_rating`, `rating_number`, `price`, `main_category`, `store`, `categories`, `description`, `features`, `details` | The product primary key identifies one stored metadata row and therefore determines all its other fields. |
+| `reviews` | `(source_id, source_line)` → `parent_asin`, `user_id`, `asin`, `rating`, `title`, `review_text`, `reviewed_at`, `helpful_vote`, `verified_purchase` | The combined primary key identifies one review record by its source file and original line number. |
+
+These dependencies are enforced by the primary keys in [schema.sql](../Phase%201/Create%20and%20Load%20Dataset/schema.sql). The loader keeps the existing row when the same key appears again. Product titles, stores, and user identifiers are not declared unique. A product can have many reviews, so `parent_asin` does not determine an individual review's rating or text.
+
+We also checked the first **100,000 nonblank review source records**, using the Phase I text-cleaning rules and excluding missing identifiers from each check. All 100,000 records had usable `asin` and `parent_asin` values.
+
+| Relationship checked | Sample result | Interpretation |
+| --- | --- | --- |
+| `asin` → `parent_asin` | 66,260 distinct ASINs; none mapped to more than one parent. | The dependency holds in this sample. It is not enforced by the schema or established for the full dataset. |
+| `user_id` → `parent_asin` | 10,714 of the 15,322 distinct users reviewed more than one parent product. | This dependency does not hold. A reviewer can review several products. |
+
+The loader assigns the same `source_id` to this import. Although line numbers distinguish records within that file, the combined key also supports other sources whose line numbers may overlap. Uniqueness within one imported file does not establish `source_line` as a key across multiple sources.
+
+## Normalization
+
+### First Normal Form (1NF)
+
+The scalar fields store one value per column, and the primary keys distinguish rows. However, `categories`, `description`, and `features` preserve lists, while `details` preserves an object inside a JSON column. MySQL stores each as one JSON value, but the contents remain nested or multivalued. The complete model therefore does not follow the traditional flattened 1NF design for those attributes.
+
+We kept these fields together because they describe the same product and preserve the source metadata without creating several additional tables. Q5 expands categories with `JSON_TABLE` when individual category entries are needed. A fully flattened alternative would use separate tables for category entries, descriptions, features, and detail attributes, linked by `parent_asin`. Entry positions could preserve array order and repeated values.
+
+### Second Normal Form (2NF)
+
+For the scalar part of `products`, the primary key has one field, so there is no proper subset of that key on which an attribute could partially depend. For `reviews`, the intended identity is the full `(source_id, source_line)` combination: the source identifies the file, and the line identifies the record within it. Review attributes are attached to that full identity. The model does not define a dependency from either key component alone to a non-key review attribute across multiple sources.
+
+This supports 2NF for the scalar relations under the stated key dependencies. It does not remove the separate 1NF limitation of the nested product JSON fields.
+
+### Third Normal Form (3NF) and BCNF
+
+Keeping product metadata in `products` avoids repeating titles, prices, and stores in every review. If those fields were stored in `reviews`, the review key would determine `parent_asin`, which would then determine the product metadata. Separating the tables avoids that transitive dependency and the need to update the same metadata in many review rows.
+
+For the scalar product fields, the documented dependency has the product key as its determinant. Under that dependency set, the scalar product relation meets 3NF and BCNF. This is a statement about the identified dependencies, rather than proof that no additional business dependencies exist.
+
+The sample observation `asin` → `parent_asin` needs separate attention in `reviews`. If it holds as a rule throughout the dataset, the review key determines `asin`, which determines `parent_asin`. Since `asin` is not a review key and `parent_asin` is not part of the declared key, this would violate 3NF and BCNF. A normalized alternative would keep an ASIN-to-parent mapping in a separate table and obtain the parent through that mapping. Our current design retains both identifiers in each review to support direct product joins.
+
+We therefore describe the model as separating product and review facts while intentionally retaining nested product metadata and both review identifiers. We do not claim that the entire schema is fully normalized or in BCNF; the JSON structure and the sample-observed ASIN dependency require these qualifications.
 
 ## Timings Before and After Indexing
 
 | Query | Question | Index used | Before | After | Speedup |
 | --- | --- | --- | ---: | ---: | ---: |
-| Q1 | How did reviews change over the years? | `idx_reviews_time_rating (reviewed_at, rating)` | 86.94 s | 56.88 s | 1.5× |
-| Q2 | Do more expensive electronics get better ratings? | `idx_products_price (price, average_rating, rating_number)` | 50.09 s | 0.61 s | ~82× |
-| Q3 | What do the most helpful reviews look like? | `idx_reviews_helpful (helpful_vote)` | 73.72 s | 0.047 s | ~1,570× |
-| Q4 | Do verified buyers rate differently? | `idx_reviews_verified (verified_purchase, rating, helpful_vote)` | 94.78 s | 55.52 s | 1.7× |
-| Q5 | Which sub-categories disappoint buyers the most? | `idx_products_rating_number (rating_number, average_rating)` | 70.11 s | 76.64 s | none |
+| Q1 | How did reviews change over the years? | `idx_reviews_time_rating (reviewed_at, rating)` | 21.759 s | 17.583 s | 1.24× |
+| Q2 | Do more expensive electronics get better ratings? | `idx_products_price (price, average_rating, rating_number)` | 30.550 s | 0.191 s | 159.71× |
+| Q3 | What do the most helpful reviews look like? | `idx_reviews_helpful (helpful_vote)` | 15.330 s | 0.0145 s | 1,056.95× |
+| Q4 | Do verified buyers rate differently? | `idx_reviews_verified (verified_purchase, rating, helpful_vote)` | 27.141 s | 20.384 s | 1.33× |
+| Q5 | Which sub-categories disappoint buyers the most? | `idx_products_rating_number (rating_number, average_rating)` | 34.152 s | 32.561 s | 1.05× |
 
 ## Index Build Times
 
+Source: [measured index-build times](sql_results/after_indexes/index_build_times.csv). All five indexes were created during this run.
+
 | Index | Table | Build time |
 | --- | --- | ---: |
-| `idx_reviews_time_rating` | reviews | 162.28 s |
-| `idx_products_price` | products | 18.89 s |
-| `idx_reviews_helpful` | reviews | 271.41 s |
-| `idx_reviews_verified` | reviews | 313.34 s |
-| `idx_products_rating_number` | products | 20.14 s |
+| `idx_reviews_time_rating` | reviews | 116.07 s |
+| `idx_products_price` | products | 9.86 s |
+| `idx_reviews_helpful` | reviews | 110.86 s |
+| `idx_reviews_verified` | reviews | 117.88 s |
+| `idx_products_rating_number` | products | 9.90 s |
 
 The review indexes take far longer to build because they cover ~44M rows, compared with ~1.6M products.
 
 ## Why Each Index Helped (or Did Not)
 
-- **Q3, ~1,570× faster.** The index stores reviews sorted by `helpful_vote`. MySQL reads the highest values from the end of the index and stops after 15 matches, then joins only those 15 reviews to `products`. Without it, MySQL scanned all ~44M reviews.
-- **Q2, ~82× faster.** The index contains every column Q2 uses (`price`, `average_rating`, `rating_number`), so MySQL answers the query from the index alone (a covering index) and never reads the large product rows with their description, feature and details JSON.
-- **Q1 and Q4, 1.5–1.7× faster.** Both indexes are covering, so MySQL reads small index entries instead of review rows that include long review text. Both queries still aggregate every review, so the work cannot drop below one pass over ~44M index entries.
-- **Q5, no gain.** Most products pass the `rating_number >= 10` filter, so the index skips little. MySQL must still read every remaining product row to expand its `categories` JSON array with `JSON_TABLE`, and an index cannot store that array. The extra index lookups made the run slightly slower.
+- **Q3, 1,056.95× faster.** The index stores reviews sorted by `helpful_vote`. MySQL reads the highest values from the end of the index and stops after 15 matches, then joins only those 15 reviews to `products`. Without it, MySQL scanned all ~44M reviews.
+- **Q2, 159.71× faster.** The index contains every column Q2 uses (`price`, `average_rating`, `rating_number`), so MySQL answers the query from the index alone (a covering index) and never reads the large product rows with their description, feature and details JSON.
+- **Q1 and Q4, 1.24× and 1.33× faster, respectively.** Both indexes are covering, so MySQL reads small index entries instead of review rows that include long review text. Both queries still aggregate every review, so the work cannot drop below one pass over ~44M index entries.
+- **Q5, 1.05× faster (small gain).** Most products pass the `rating_number >= 10` filter, so the index skips little. MySQL must still read every remaining product row to expand its `categories` JSON array with `JSON_TABLE`, and an index cannot store that array. The measured improvement was small.
 
 ## Query Results
 
@@ -94,5 +139,4 @@ Finding: about half of all hidden cameras with 10+ ratings are rated below 3.5.
 
 ## Notes
 
-- An earlier version of the store-ranking query joined all ~44M reviews to `products` before grouping. Without an index on `reviews.parent_asin` it ran for 1,159.75 s and was cancelled. It was replaced by Q2, which answers a different question using only the `products` table.
 - Each query was timed once. The after-index runs followed the before-index runs, so part of the improvement for Q1 and Q4 may come from data already being in memory.

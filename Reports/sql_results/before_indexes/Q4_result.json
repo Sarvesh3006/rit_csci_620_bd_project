@@ -1,0 +1,18 @@
+[
+  {
+    "reviewer": "Verified buyer",
+    "total_reviews": 40546882,
+    "avg_rating": "4.12",
+    "pct_5_star": "64.2",
+    "pct_1_star": "11.8",
+    "avg_helpful_votes": "0.98"
+  },
+  {
+    "reviewer": "Not verified",
+    "total_reviews": 3340060,
+    "avg_rating": "3.82",
+    "pct_5_star": "53.5",
+    "pct_1_star": "16.6",
+    "avg_helpful_votes": "2.46"
+  }
+]

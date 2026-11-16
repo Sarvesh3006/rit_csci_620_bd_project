@@ -1,0 +1,62 @@
+[
+  {
+    "total_products": {
+      "$numberInt": "182113"
+    },
+    "price_range": "1. Under $25",
+    "avg_rating": {
+      "$numberDecimal": "4.27"
+    },
+    "pct_low_rated": {
+      "$numberDecimal": "4.5"
+    },
+    "avg_ratings_per_product": {
+      "$numberDecimal": "519"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "97703"
+    },
+    "price_range": "2. $25 - $99",
+    "avg_rating": {
+      "$numberDecimal": "4.19"
+    },
+    "pct_low_rated": {
+      "$numberDecimal": "6.7"
+    },
+    "avg_ratings_per_product": {
+      "$numberDecimal": "566"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "45074"
+    },
+    "price_range": "3. $100 - $499",
+    "avg_rating": {
+      "$numberDecimal": "4.16"
+    },
+    "pct_low_rated": {
+      "$numberDecimal": "7.4"
+    },
+    "avg_ratings_per_product": {
+      "$numberDecimal": "410"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "10682"
+    },
+    "price_range": "4. $500 and up",
+    "avg_rating": {
+      "$numberDecimal": "4.2"
+    },
+    "pct_low_rated": {
+      "$numberDecimal": "6.1"
+    },
+    "avg_ratings_per_product": {
+      "$numberDecimal": "167"
+    }
+  }
+]

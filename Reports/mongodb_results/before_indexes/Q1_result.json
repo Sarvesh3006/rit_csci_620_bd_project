@@ -1,0 +1,461 @@
+[
+  {
+    "total_reviews": {
+      "$numberInt": "1"
+    },
+    "review_year": {
+      "$numberInt": "1996"
+    },
+    "avg_rating": {
+      "$numberDecimal": "4"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "0"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "0"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "9"
+    },
+    "review_year": {
+      "$numberInt": "1998"
+    },
+    "avg_rating": {
+      "$numberDecimal": "4.78"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "77.8"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "0"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "419"
+    },
+    "review_year": {
+      "$numberInt": "1999"
+    },
+    "avg_rating": {
+      "$numberDecimal": "4.15"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "55.4"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "6.7"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "3756"
+    },
+    "review_year": {
+      "$numberInt": "2000"
+    },
+    "avg_rating": {
+      "$numberDecimal": "4.14"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "53.9"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "7.4"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "6841"
+    },
+    "review_year": {
+      "$numberInt": "2001"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.97"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "49.7"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "10.5"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "9118"
+    },
+    "review_year": {
+      "$numberInt": "2002"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.84"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "47.3"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "13.1"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "12318"
+    },
+    "review_year": {
+      "$numberInt": "2003"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.78"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "46.3"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "14.6"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "17617"
+    },
+    "review_year": {
+      "$numberInt": "2004"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.61"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "42.5"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "18.2"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "33140"
+    },
+    "review_year": {
+      "$numberInt": "2005"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.67"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "43"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "16.8"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "54392"
+    },
+    "review_year": {
+      "$numberInt": "2006"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.76"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "45.7"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "15.1"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "125744"
+    },
+    "review_year": {
+      "$numberInt": "2007"
+    },
+    "avg_rating": {
+      "$numberDecimal": "4.01"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "52"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "10.5"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "157531"
+    },
+    "review_year": {
+      "$numberInt": "2008"
+    },
+    "avg_rating": {
+      "$numberDecimal": "4.01"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "52.9"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "10.6"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "209844"
+    },
+    "review_year": {
+      "$numberInt": "2009"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.97"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "52.4"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "11.6"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "309254"
+    },
+    "review_year": {
+      "$numberInt": "2010"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.95"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "51.8"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "11.8"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "513687"
+    },
+    "review_year": {
+      "$numberInt": "2011"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.98"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "53.9"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "11.8"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "800684"
+    },
+    "review_year": {
+      "$numberInt": "2012"
+    },
+    "avg_rating": {
+      "$numberDecimal": "4.03"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "56.6"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "11.2"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "1714533"
+    },
+    "review_year": {
+      "$numberInt": "2013"
+    },
+    "avg_rating": {
+      "$numberDecimal": "4.12"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "58.5"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "9.1"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "2478806"
+    },
+    "review_year": {
+      "$numberInt": "2014"
+    },
+    "avg_rating": {
+      "$numberDecimal": "4.15"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "61.1"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "9.4"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "3407531"
+    },
+    "review_year": {
+      "$numberInt": "2015"
+    },
+    "avg_rating": {
+      "$numberDecimal": "4.17"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "63.2"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "9.6"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "3758899"
+    },
+    "review_year": {
+      "$numberInt": "2016"
+    },
+    "avg_rating": {
+      "$numberDecimal": "4.18"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "64.1"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "10"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "3793378"
+    },
+    "review_year": {
+      "$numberInt": "2017"
+    },
+    "avg_rating": {
+      "$numberDecimal": "4.14"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "64"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "11.2"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "3911866"
+    },
+    "review_year": {
+      "$numberInt": "2018"
+    },
+    "avg_rating": {
+      "$numberDecimal": "4.12"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "64.6"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "12.1"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "4967808"
+    },
+    "review_year": {
+      "$numberInt": "2019"
+    },
+    "avg_rating": {
+      "$numberDecimal": "4.2"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "68.1"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "11.4"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "5726687"
+    },
+    "review_year": {
+      "$numberInt": "2020"
+    },
+    "avg_rating": {
+      "$numberDecimal": "4.13"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "66.4"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "12.5"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "5435774"
+    },
+    "review_year": {
+      "$numberInt": "2021"
+    },
+    "avg_rating": {
+      "$numberDecimal": "4.02"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "63.5"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "14.7"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "4524431"
+    },
+    "review_year": {
+      "$numberInt": "2022"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.94"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "60.9"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "16.1"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "1912874"
+    },
+    "review_year": {
+      "$numberInt": "2023"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.99"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "62.4"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "15.2"
+    }
+  }
+]

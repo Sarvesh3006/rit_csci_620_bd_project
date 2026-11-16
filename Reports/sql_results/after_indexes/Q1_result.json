@@ -1,0 +1,191 @@
+[
+  {
+    "review_year": 1996,
+    "total_reviews": 1,
+    "avg_rating": "4.00",
+    "pct_5_star": "0.0",
+    "pct_1_star": "0.0"
+  },
+  {
+    "review_year": 1998,
+    "total_reviews": 9,
+    "avg_rating": "4.78",
+    "pct_5_star": "77.8",
+    "pct_1_star": "0.0"
+  },
+  {
+    "review_year": 1999,
+    "total_reviews": 419,
+    "avg_rating": "4.15",
+    "pct_5_star": "55.4",
+    "pct_1_star": "6.7"
+  },
+  {
+    "review_year": 2000,
+    "total_reviews": 3756,
+    "avg_rating": "4.14",
+    "pct_5_star": "53.9",
+    "pct_1_star": "7.4"
+  },
+  {
+    "review_year": 2001,
+    "total_reviews": 6841,
+    "avg_rating": "3.97",
+    "pct_5_star": "49.7",
+    "pct_1_star": "10.5"
+  },
+  {
+    "review_year": 2002,
+    "total_reviews": 9118,
+    "avg_rating": "3.84",
+    "pct_5_star": "47.3",
+    "pct_1_star": "13.1"
+  },
+  {
+    "review_year": 2003,
+    "total_reviews": 12318,
+    "avg_rating": "3.78",
+    "pct_5_star": "46.3",
+    "pct_1_star": "14.6"
+  },
+  {
+    "review_year": 2004,
+    "total_reviews": 17617,
+    "avg_rating": "3.61",
+    "pct_5_star": "42.5",
+    "pct_1_star": "18.2"
+  },
+  {
+    "review_year": 2005,
+    "total_reviews": 33140,
+    "avg_rating": "3.67",
+    "pct_5_star": "43.0",
+    "pct_1_star": "16.8"
+  },
+  {
+    "review_year": 2006,
+    "total_reviews": 54392,
+    "avg_rating": "3.76",
+    "pct_5_star": "45.7",
+    "pct_1_star": "15.1"
+  },
+  {
+    "review_year": 2007,
+    "total_reviews": 125744,
+    "avg_rating": "4.01",
+    "pct_5_star": "52.0",
+    "pct_1_star": "10.5"
+  },
+  {
+    "review_year": 2008,
+    "total_reviews": 157531,
+    "avg_rating": "4.01",
+    "pct_5_star": "52.9",
+    "pct_1_star": "10.6"
+  },
+  {
+    "review_year": 2009,
+    "total_reviews": 209844,
+    "avg_rating": "3.97",
+    "pct_5_star": "52.4",
+    "pct_1_star": "11.6"
+  },
+  {
+    "review_year": 2010,
+    "total_reviews": 309254,
+    "avg_rating": "3.95",
+    "pct_5_star": "51.8",
+    "pct_1_star": "11.8"
+  },
+  {
+    "review_year": 2011,
+    "total_reviews": 513687,
+    "avg_rating": "3.98",
+    "pct_5_star": "53.9",
+    "pct_1_star": "11.8"
+  },
+  {
+    "review_year": 2012,
+    "total_reviews": 800684,
+    "avg_rating": "4.03",
+    "pct_5_star": "56.6",
+    "pct_1_star": "11.2"
+  },
+  {
+    "review_year": 2013,
+    "total_reviews": 1714533,
+    "avg_rating": "4.12",
+    "pct_5_star": "58.5",
+    "pct_1_star": "9.1"
+  },
+  {
+    "review_year": 2014,
+    "total_reviews": 2478806,
+    "avg_rating": "4.15",
+    "pct_5_star": "61.1",
+    "pct_1_star": "9.4"
+  },
+  {
+    "review_year": 2015,
+    "total_reviews": 3407531,
+    "avg_rating": "4.17",
+    "pct_5_star": "63.2",
+    "pct_1_star": "9.6"
+  },
+  {
+    "review_year": 2016,
+    "total_reviews": 3758899,
+    "avg_rating": "4.18",
+    "pct_5_star": "64.1",
+    "pct_1_star": "10.0"
+  },
+  {
+    "review_year": 2017,
+    "total_reviews": 3793378,
+    "avg_rating": "4.14",
+    "pct_5_star": "64.0",
+    "pct_1_star": "11.2"
+  },
+  {
+    "review_year": 2018,
+    "total_reviews": 3911866,
+    "avg_rating": "4.12",
+    "pct_5_star": "64.6",
+    "pct_1_star": "12.1"
+  },
+  {
+    "review_year": 2019,
+    "total_reviews": 4967808,
+    "avg_rating": "4.20",
+    "pct_5_star": "68.1",
+    "pct_1_star": "11.4"
+  },
+  {
+    "review_year": 2020,
+    "total_reviews": 5726687,
+    "avg_rating": "4.13",
+    "pct_5_star": "66.4",
+    "pct_1_star": "12.5"
+  },
+  {
+    "review_year": 2021,
+    "total_reviews": 5435774,
+    "avg_rating": "4.02",
+    "pct_5_star": "63.5",
+    "pct_1_star": "14.7"
+  },
+  {
+    "review_year": 2022,
+    "total_reviews": 4524431,
+    "avg_rating": "3.94",
+    "pct_5_star": "60.9",
+    "pct_1_star": "16.1"
+  },
+  {
+    "review_year": 2023,
+    "total_reviews": 1912874,
+    "avg_rating": "3.99",
+    "pct_5_star": "62.4",
+    "pct_1_star": "15.2"
+  }
+]

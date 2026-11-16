@@ -1,0 +1,6 @@
+query,phase,rows,elapsed_ms
+Q1,before_indexes,27,81753.058
+Q2,before_indexes,4,7226.587
+Q3,before_indexes,15,60758.777
+Q4,before_indexes,2,84246.798
+Q5,before_indexes,15,7807.48

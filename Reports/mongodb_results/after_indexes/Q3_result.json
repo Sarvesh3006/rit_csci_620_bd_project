@@ -1,0 +1,182 @@
+[
+  {
+    "helpful_vote": {
+      "$numberLong": "46841"
+    },
+    "product": "Fire Tablet with Alexa, 7\" Display, 16 GB, Blue - ",
+    "store": "Amazon",
+    "rating": {
+      "$numberDecimal": "5.00"
+    },
+    "verified_purchase": true,
+    "review_title": "Why and how the Kindle changes everything"
+  },
+  {
+    "helpful_vote": {
+      "$numberLong": "32948"
+    },
+    "product": "Fire TV Stick with Alexa Voice Remote, streaming m",
+    "store": "Amazon",
+    "rating": {
+      "$numberDecimal": "5.00"
+    },
+    "verified_purchase": true,
+    "review_title": "What I once thought was silly is now a good thing!"
+  },
+  {
+    "helpful_vote": {
+      "$numberLong": "26331"
+    },
+    "product": "Amazon Fire TV - 1st Generation",
+    "store": "Amazon",
+    "rating": {
+      "$numberDecimal": "5.00"
+    },
+    "verified_purchase": true,
+    "review_title": "This box is a GAME CHANGER for on demand content! Amazon kno"
+  },
+  {
+    "helpful_vote": {
+      "$numberLong": "24261"
+    },
+    "product": "Kindle Wireless Reading Device (6\" Display, U.S. W",
+    "store": "Amazon",
+    "rating": {
+      "$numberDecimal": "1.00"
+    },
+    "verified_purchase": true,
+    "review_title": "BEWARE of the SIGNIFICANT DIFFERENCES between Kindle 1 and K"
+  },
+  {
+    "helpful_vote": {
+      "$numberLong": "18501"
+    },
+    "product": "Fire HD 10 Tablet (10.1\" 1080p full HD display, 64",
+    "store": "Amazon",
+    "rating": {
+      "$numberDecimal": "4.00"
+    },
+    "verified_purchase": true,
+    "review_title": "Not going to blow smoke..."
+  },
+  {
+    "helpful_vote": {
+      "$numberLong": "18147"
+    },
+    "product": "Echo Dot (2nd Generation) - Smart speaker with Ale",
+    "store": "Amazon",
+    "rating": {
+      "$numberDecimal": "5.00"
+    },
+    "verified_purchase": true,
+    "review_title": "The Smartest of Them All!!! (Check out the video for a quick"
+  },
+  {
+    "helpful_vote": {
+      "$numberLong": "16478"
+    },
+    "product": "Kindle Paperwhite, 6\" High Resolution Display with",
+    "store": "Amazon",
+    "rating": {
+      "$numberDecimal": "5.00"
+    },
+    "verified_purchase": true,
+    "review_title": "Amazing new Kindle is nearly perfect except for ads in the n"
+  },
+  {
+    "helpful_vote": {
+      "$numberLong": "15169"
+    },
+    "product": "Kindle, 6\" E Ink Display, Wi-Fi - Includes Special",
+    "store": "Amazon",
+    "rating": {
+      "$numberDecimal": "4.00"
+    },
+    "verified_purchase": true,
+    "review_title": "New Kindle Buyer? Thinking about Nook? Read on ..."
+  },
+  {
+    "helpful_vote": {
+      "$numberLong": "15074"
+    },
+    "product": "Bose QuietComfort 35 II Wireless Bluetooth Headpho",
+    "store": "Bose",
+    "rating": {
+      "$numberDecimal": "5.00"
+    },
+    "verified_purchase": true,
+    "review_title": "I give it five stars. My wife hates them ..."
+  },
+  {
+    "helpful_vote": {
+      "$numberLong": "14647"
+    },
+    "product": "Blink Mini – Compact indoor plug-in smart security",
+    "store": "Blink",
+    "rating": {
+      "$numberDecimal": "2.00"
+    },
+    "verified_purchase": true,
+    "review_title": "One major flaw."
+  },
+  {
+    "helpful_vote": {
+      "$numberLong": "14153"
+    },
+    "product": "Fire Tablet with Alexa, 7\" Display, 16 GB, Blue - ",
+    "store": "Amazon",
+    "rating": {
+      "$numberDecimal": "5.00"
+    },
+    "verified_purchase": true,
+    "review_title": "This is a steal for $50 as long as you aren;t expecting a \"P"
+  },
+  {
+    "helpful_vote": {
+      "$numberLong": "13973"
+    },
+    "product": "Amazon Smart Plug, for home automation, Works with",
+    "store": "Amazon",
+    "rating": {
+      "$numberDecimal": "5.00"
+    },
+    "verified_purchase": true,
+    "review_title": "Great smart plug to go with echo!"
+  },
+  {
+    "helpful_vote": {
+      "$numberLong": "13967"
+    },
+    "product": "Echo Dot (3rd Gen) - Smart speaker with Alexa - He",
+    "store": "Amazon",
+    "rating": {
+      "$numberDecimal": "4.00"
+    },
+    "verified_purchase": true,
+    "review_title": "Love the Dot and its new look, but the sound is still disapp"
+  },
+  {
+    "helpful_vote": {
+      "$numberLong": "13510"
+    },
+    "product": "Kindle Fire HD 8.9\", Dolby Audio, Dual-Band Wi-Fi,",
+    "store": "Amazon",
+    "rating": {
+      "$numberDecimal": "5.00"
+    },
+    "verified_purchase": true,
+    "review_title": "My Thoughts (Typed Using The Kindle Fire HD 8.9)"
+  },
+  {
+    "helpful_vote": {
+      "$numberLong": "13453"
+    },
+    "product": "Fire TV Stick streaming device with Alexa built in",
+    "store": "Amazon",
+    "rating": {
+      "$numberDecimal": "5.00"
+    },
+    "verified_purchase": true,
+    "review_title": "The Remote quickly learns how to power the tv AND accessorie"
+  }
+]

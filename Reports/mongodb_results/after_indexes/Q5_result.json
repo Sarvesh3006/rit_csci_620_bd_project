@@ -1,0 +1,227 @@
+[
+  {
+    "total_products": {
+      "$numberInt": "1752"
+    },
+    "category": "Hidden Cameras",
+    "pct_low_rated": {
+      "$numberDecimal": "50.9"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.52"
+    },
+    "avg_price": {
+      "$numberDecimal": "71.16"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "1012"
+    },
+    "category": "Audio Docks",
+    "pct_low_rated": {
+      "$numberDecimal": "46.2"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.52"
+    },
+    "avg_price": {
+      "$numberDecimal": "101.51"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "3175"
+    },
+    "category": "MP3 & MP4 Players",
+    "pct_low_rated": {
+      "$numberDecimal": "41.6"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.56"
+    },
+    "avg_price": {
+      "$numberDecimal": "133.75"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "1228"
+    },
+    "category": "DVD Players & Recorders",
+    "pct_low_rated": {
+      "$numberDecimal": "39.4"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.6"
+    },
+    "avg_price": {
+      "$numberDecimal": "181.12"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "1600"
+    },
+    "category": "Repeaters",
+    "pct_low_rated": {
+      "$numberDecimal": "38.4"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.64"
+    },
+    "avg_price": {
+      "$numberDecimal": "54.75"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "3756"
+    },
+    "category": "LED & LCD TVs",
+    "pct_low_rated": {
+      "$numberDecimal": "30.4"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.77"
+    },
+    "avg_price": {
+      "$numberDecimal": "807.42"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "3283"
+    },
+    "category": "Camcorders",
+    "pct_low_rated": {
+      "$numberDecimal": "30.4"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.7"
+    },
+    "avg_price": {
+      "$numberDecimal": "360.22"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "4420"
+    },
+    "category": "Televisions",
+    "pct_low_rated": {
+      "$numberDecimal": "30"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.78"
+    },
+    "avg_price": {
+      "$numberDecimal": "1083.58"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "3740"
+    },
+    "category": "TV Antennas",
+    "pct_low_rated": {
+      "$numberDecimal": "29.9"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.71"
+    },
+    "avg_price": {
+      "$numberDecimal": "49.22"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "1086"
+    },
+    "category": "Receivers",
+    "pct_low_rated": {
+      "$numberDecimal": "28.9"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.77"
+    },
+    "avg_price": {
+      "$numberDecimal": "252.31"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "2802"
+    },
+    "category": "In-Dash Navigation",
+    "pct_low_rated": {
+      "$numberDecimal": "28.8"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.69"
+    },
+    "avg_price": {
+      "$numberDecimal": "205.05"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "2126"
+    },
+    "category": "Compact Radios & Stereos",
+    "pct_low_rated": {
+      "$numberDecimal": "28.3"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.71"
+    },
+    "avg_price": {
+      "$numberDecimal": "105.48"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "1446"
+    },
+    "category": "Clock Radios",
+    "pct_low_rated": {
+      "$numberDecimal": "27.9"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.71"
+    },
+    "avg_price": {
+      "$numberDecimal": "52.77"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "1390"
+    },
+    "category": "Monoculars",
+    "pct_low_rated": {
+      "$numberDecimal": "27.8"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.75"
+    },
+    "avg_price": {
+      "$numberDecimal": "53.81"
+    }
+  },
+  {
+    "total_products": {
+      "$numberInt": "1665"
+    },
+    "category": "Streaming Media Players",
+    "pct_low_rated": {
+      "$numberDecimal": "27.2"
+    },
+    "avg_rating": {
+      "$numberDecimal": "3.76"
+    },
+    "avg_price": {
+      "$numberDecimal": "124.69"
+    }
+  }
+]

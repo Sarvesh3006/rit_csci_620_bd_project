@@ -1,0 +1,38 @@
+[
+  {
+    "total_reviews": {
+      "$numberInt": "40546882"
+    },
+    "reviewer": "Verified buyer",
+    "avg_rating": {
+      "$numberDecimal": "4.12"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "64.2"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "11.8"
+    },
+    "avg_helpful_votes": {
+      "$numberDecimal": "0.98"
+    }
+  },
+  {
+    "total_reviews": {
+      "$numberInt": "3340060"
+    },
+    "reviewer": "Not verified",
+    "avg_rating": {
+      "$numberDecimal": "3.82"
+    },
+    "pct_5_star": {
+      "$numberDecimal": "53.5"
+    },
+    "pct_1_star": {
+      "$numberDecimal": "16.6"
+    },
+    "avg_helpful_votes": {
+      "$numberDecimal": "2.46"
+    }
+  }
+]

@@ -1,0 +1,107 @@
+[
+  {
+    "category": "Hidden Cameras",
+    "total_products": 1752,
+    "pct_low_rated": "50.9",
+    "avg_rating": "3.52",
+    "avg_price": "71.16"
+  },
+  {
+    "category": "Audio Docks",
+    "total_products": 1012,
+    "pct_low_rated": "46.2",
+    "avg_rating": "3.52",
+    "avg_price": "101.51"
+  },
+  {
+    "category": "MP3 & MP4 Players",
+    "total_products": 3175,
+    "pct_low_rated": "41.6",
+    "avg_rating": "3.56",
+    "avg_price": "133.75"
+  },
+  {
+    "category": "DVD Players & Recorders",
+    "total_products": 1228,
+    "pct_low_rated": "39.4",
+    "avg_rating": "3.60",
+    "avg_price": "181.12"
+  },
+  {
+    "category": "Repeaters",
+    "total_products": 1600,
+    "pct_low_rated": "38.4",
+    "avg_rating": "3.64",
+    "avg_price": "54.75"
+  },
+  {
+    "category": "Camcorders",
+    "total_products": 3283,
+    "pct_low_rated": "30.4",
+    "avg_rating": "3.70",
+    "avg_price": "360.22"
+  },
+  {
+    "category": "LED & LCD TVs",
+    "total_products": 3756,
+    "pct_low_rated": "30.4",
+    "avg_rating": "3.77",
+    "avg_price": "807.42"
+  },
+  {
+    "category": "Televisions",
+    "total_products": 4420,
+    "pct_low_rated": "30.0",
+    "avg_rating": "3.78",
+    "avg_price": "1083.58"
+  },
+  {
+    "category": "TV Antennas",
+    "total_products": 3740,
+    "pct_low_rated": "29.9",
+    "avg_rating": "3.71",
+    "avg_price": "49.22"
+  },
+  {
+    "category": "Receivers",
+    "total_products": 1086,
+    "pct_low_rated": "28.9",
+    "avg_rating": "3.77",
+    "avg_price": "252.31"
+  },
+  {
+    "category": "In-Dash Navigation",
+    "total_products": 2802,
+    "pct_low_rated": "28.8",
+    "avg_rating": "3.69",
+    "avg_price": "205.05"
+  },
+  {
+    "category": "Compact Radios & Stereos",
+    "total_products": 2126,
+    "pct_low_rated": "28.3",
+    "avg_rating": "3.71",
+    "avg_price": "105.48"
+  },
+  {
+    "category": "Clock Radios",
+    "total_products": 1446,
+    "pct_low_rated": "27.9",
+    "avg_rating": "3.71",
+    "avg_price": "52.77"
+  },
+  {
+    "category": "Monoculars",
+    "total_products": 1390,
+    "pct_low_rated": "27.8",
+    "avg_rating": "3.75",
+    "avg_price": "53.81"
+  },
+  {
+    "category": "Streaming Media Players",
+    "total_products": 1665,
+    "pct_low_rated": "27.2",
+    "avg_rating": "3.76",
+    "avg_price": "124.69"
+  }
+]

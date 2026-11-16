@@ -1,6 +1,6 @@
 -- ============================================================
 -- CSCI 620 Project - Phase II(a)
--- Amazon Reviews 2023 (Electronics) - 5 SQL queries and indexes
+-- Amazon Reviews 2023 (Electronics) - 5 queries and indexes
 -- Database: amazon_electronics_reviews (MySQL 8)
 --
 -- How to use (MySQL Workbench):
