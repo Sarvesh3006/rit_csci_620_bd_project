@@ -1,8 +1,0 @@
-{
-  "database": "amazon_electronics_reviews",
-  "phase": "before_indexes",
-  "started_at_utc": "2026-11-15T23-23-32-688777Z",
-  "query_file": "/Users/aliahmad/Desktop/CSCI 620/Project/Phase 2 and 3/Sql/Queries/sql_queries.sql",
-  "timing_method": "Client elapsed milliseconds: execute through fetchall, excluding file export",
-  "note": "Existing indexes are recorded; none are dropped."
-}
