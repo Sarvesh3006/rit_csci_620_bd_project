@@ -1,53 +1,27 @@
 # Phase III(a) — MongoDB Aggregation Queries, Indexes and Timings
 
-We implemented five aggregation queries over the Amazon Reviews 2023 Electronics dataset in `amazon_electronics_reviews`. They answer the same questions as the Phase II(a) SQL workload using the `products` and `reviews` collections described in the [Phase II(b) report](phase_2b_mongodb_report.md).
+Database: `amazon_electronics_reviews`. Collections: `products` and `reviews`.
+Code: [mongodb_queries.js](../Phase%202%20and%203/Mongodb/Queries/mongodb_queries.js). Model: [Phase II(b)](phase_2b_mongodb_report.md). Requirements: [project PDF, Phase III(a)](../CSCI-620%20Project.pdf).
 
-Queries: [mongodb_queries.js](../Phase%202%20and%203/Mongodb/Queries/mongodb_queries.js).
-Requirements: [CSCI-620 project description, Phase III(a)](../CSCI-620%20Project.pdf), pages 1–2.
+## Query Design
 
-## Aggregation Design
+| Query | Selection and calculation | Pipeline stages |
+| --- | --- | --- |
+| Q1 — Reviews per year | Reviews with dates and ratings; counts, mean rating, and 5-star/1-star shares by UTC year. | `$match` → `$group` → `$project` → `$sort` |
+| Q2 — Price vs. rating | Products with known price/rating and at least 10 ratings; `$switch` assigns four price bands. | `$match` → `$group` → `$project` → `$sort` |
+| Q3 — Helpful reviews | At least 1,000 helpful votes; join `reviews.parent_asin` to `products._id`; return the top 15. | `$match` → `$sort` → `$lookup` → `$unwind` → `$limit` → `$project` |
+| Q4 — Verified reviewers | Reviews with known verification and rating; compare counts, ratings, star shares, and helpful votes. | `$match` → `$group` → `$sort` → `$project` |
+| Q5 — Disappointing categories | Products with a rating and at least 10 ratings; expand categories, exclude `Electronics`/null, retain groups with at least 1,000 entries, and return the top 15 by low-rating share. | `$match` → `$unwind` → `$match` → `$group` → `$match` → `$project` → `$sort` → `$limit` |
 
-| Query | Question | Collection | Main pipeline stages |
-| --- | --- | --- | --- |
-| Q1 | How did reviews change over the years? | `reviews` | `$match` → `$group` → `$project` → `$sort` |
-| Q2 | Do more expensive electronics get better ratings? | `products` | `$match` → `$group` → `$project` → `$sort` |
-| Q3 | What do the most helpful reviews look like? | `reviews`, joined to `products` | `$match` → `$sort` → `$lookup` → `$unwind` → `$limit` → `$project` |
-| Q4 | Do verified buyers rate differently? | `reviews` | `$match` → `$group` → `$sort` → `$project` |
-| Q5 | Which sub-categories disappoint buyers the most? | `products` | `$match` → `$unwind` → `$match` → `$group` → `$match` → `$project` → `$sort` → `$limit` |
+Q1 supplies the four required stages. Q3 uses joined product sub-documents; `$unwind` removes unmatched joins before the limit. Q5 processes an embedded array, counting repeated entries separately, as SQL's `JSON_TABLE` does. Product and review titles in Q3 are limited to 50 and 60 characters.
 
-### Q1 — Reviews per year
+## Measurements
 
-`$match` excludes reviews with missing dates or ratings. `$group` extracts the UTC year and calculates review counts, average ratings, and counts of 5-star and 1-star reviews. `$project` calculates the percentages and rounds the results, and `$sort` puts the years in chronological order. This query uses all four pipeline stages explicitly required by Phase III(a).
+One execution per query before and after creating five indexes. Client elapsed time covers `aggregate()` through `toArray()`, excluding file export; it is not explain's `executionTimeMillis`. Every pipeline uses `allowDiskUse: true`.
 
-### Q2 — Price range vs. rating
+Baseline indexes: `_id_` on both collections and `reviews_parent_asin` on reviews. Sources: [before timings](mongodb_results/before_indexes/timings.csv), [after timings](mongodb_results/after_indexes/timings.csv), and [comparison](mongodb_results/comparison.csv). Displayed seconds are rounded; ratios use the original milliseconds.
 
-The pipeline selects products with a price, an average rating, and at least 10 ratings. `$switch` assigns each product to the same four price ranges used in SQL. `$group` calculates the number of products, mean rating, share rated below 3.5, and average rating count. `$project` formats the results and `$sort` orders the price ranges.
-
-### Q3 — Most helpful reviews and their products
-
-The pipeline selects reviews with at least 1,000 helpful votes and sorts them from most to least helpful. `$lookup` matches `reviews.parent_asin` to `products._id`, creating an array of matching product documents. `$unwind` expands that array and removes unmatched reviews, giving the inner-join behavior of the SQL query. `$limit` retains the top 15 joined reviews. `$project` reads fields from the joined product sub-document and shortens product and review titles to 50 and 60 characters. The limit remains after the join so unmatched reviews cannot consume places in the top 15. See MongoDB's [$lookup documentation](https://www.mongodb.com/docs/manual/reference/operator/aggregation/lookup/).
-
-### Q4 — Verified vs. non-verified reviewers
-
-After excluding missing verification flags and ratings, `$group` separates verified buyers from other reviewers. It calculates review counts, average ratings, 5-star and 1-star percentages, and average helpful votes. `$sort` places verified buyers first, and `$project` adds readable group labels and rounded output values.
-
-### Q5 — Disappointing sub-categories
-
-The pipeline selects products with an average rating and at least 10 ratings. `$unwind` processes the embedded `categories` array, producing one pipeline document for each category entry. It excludes `Electronics` and null categories, then groups the remaining entries by category. A second group-level filter retains categories with at least 1,000 entries. The final stages calculate low-rating percentages and averages, sort by the low-rating percentage, and return the top 15. Products can contribute to more than one category, matching SQL's `JSON_TABLE` expansion. See MongoDB's [$unwind documentation](https://www.mongodb.com/docs/manual/reference/operator/aggregation/unwind/).
-
-These queries satisfy the five-query requirement, the required multi-stage aggregation, the secondary-collection join, and array manipulation. Q3 also accesses fields inside the product sub-documents produced by `$lookup`.
-
-## Measurement Method
-
-The standalone `mongosh` runner executed each pipeline once before creating the five query indexes and once afterward. It measured client elapsed time from `aggregate()` through completion of `toArray()`, excluding CSV and JSON export. These are elapsed measurements, rather than explain's `executionTimeMillis`. All pipelines used `allowDiskUse: true`; this option does not establish that a query actually spilled to disk.
-
-The baseline retained the automatic `_id_` indexes on both collections and the existing `reviews_parent_asin` index. The five additional query indexes were created between the baseline and indexed runs. Their definitions are included in [mongodb_queries.js](../Phase%202%20and%203/Mongodb/Queries/mongodb_queries.js), and their creation times are recorded in the [index-build measurements](mongodb_results/after_indexes/index_build_times.csv).
-
-Sources: [before timings](mongodb_results/before_indexes/timings.csv), [after timings](mongodb_results/after_indexes/timings.csv), and [timing comparison](mongodb_results/comparison.csv). Times below are converted from milliseconds to seconds; speedups use the unrounded elapsed measurements.
-
-## Timings Before and After Indexing
-
-| Query | Index proposed | Before | After | Speedup (before / after) |
+| Query | Added index and fields | Before | After | Speedup (before / after) |
 | --- | --- | ---: | ---: | ---: |
 | Q1 | `idx_reviews_time_rating (reviewed_at, rating)` | 81.753 s | 18.686 s | 4.38× |
 | Q2 | `idx_products_price (price, average_rating, rating_number)` | 7.227 s | 0.417 s | 17.34× |
@@ -55,11 +29,11 @@ Sources: [before timings](mongodb_results/before_indexes/timings.csv), [after ti
 | Q4 | `idx_reviews_verified (verified_purchase, rating, helpful_vote)` | 84.247 s | 28.682 s | 2.94× |
 | Q5 | `idx_products_rating_number (rating_number, average_rating)` | 7.807 s | 11.495 s | 0.68× |
 
-A speedup below 1 means the indexed run was slower. Q5 took **1.47× as long**, an increase of approximately **47.2%**.
+Q3 improved most. Q5 became **47.2% slower**: 1.47× its baseline time. A speedup below 1 indicates a slowdown.
 
-## Index Build Times
+### Index Construction
 
-Source: [index-build measurements](mongodb_results/after_indexes/index_build_times.csv).
+Source: [index-build times](mongodb_results/after_indexes/index_build_times.csv).
 
 | Index | Collection | Build time |
 | --- | --- | ---: |
@@ -70,22 +44,22 @@ Source: [index-build measurements](mongodb_results/after_indexes/index_build_tim
 | `idx_products_rating_number` | products | 7.14 s |
 | **Total** | | **277.98 s** |
 
-The three review indexes took substantially longer to build than the two product indexes, consistent with the much larger review collection.
+### Index Interpretation
 
-## Why the Indexed Configuration Helped or Did Not Help
+| Queries | Intended benefit or remaining work |
+| --- | --- |
+| Q1, Q4 | Index the scalar fields used by the summaries; counting and averaging still cover almost all eligible reviews. |
+| Q2 | Index all three filter/aggregation fields, potentially reducing access to large product documents. |
+| Q3 | Support the helpful-vote filter and descending order; `products._id_` supports the join. |
+| Q5 | Support the rating-count filter; category expansion, grouping, and sorting remain. The observed slowdown's cause was not measured. |
 
-The following explanations describe the intended benefits of the indexed fields. The query file provides the index definitions, and the saved results record elapsed times, but no execution plans were saved. They therefore do not confirm which index or access method the optimizer selected. MongoDB documents that early `$match` and eligible `$sort` stages can benefit from indexes in its [aggregation optimization guidance](https://www.mongodb.com/docs/manual/core/aggregation-pipeline-optimization/).
-
-- **Q3, 2,646.17× faster.** The helpful-vote index supports the initial threshold and descending order. The existing `products._id_` index supports product matching during `$lookup`. This combination can avoid scanning and sorting the entire review collection before producing the top joined reviews.
-- **Q2, 17.34× faster.** The proposed compound index contains the three numeric fields needed for filtering and aggregation. Its field coverage offers a way to reduce access to large product documents containing descriptions and other embedded data.
-- **Q1 and Q4, 4.38× and 2.94× faster.** Their compound indexes contain the scalar fields used in filtering and aggregation. Both workloads still calculate statistics over almost the entire review population, so they retain substantial aggregation work.
-- **Q5, 0.68× speedup.** The proposed index addresses the rating-count filter, but the pipeline must still expand category arrays, group category entries, and sort computed percentages. The indexed configuration was slower in this run. Additional document lookups and cache or execution variation are possible explanations; the timings alone do not identify the cause.
+These are intended benefits, not verified access plans. See [MongoDB aggregation optimization](https://www.mongodb.com/docs/manual/core/aggregation-pipeline-optimization/).
 
 ## Query Results
 
-The before- and after-index exports contain the same result values for every MongoDB query. The returned row counts were 27, 4, 15, 2, and 15 for Q1–Q5, respectively. Full CSV and Extended JSON outputs are saved in the [before-index folder](mongodb_results/before_indexes/) and [after-index folder](mongodb_results/after_indexes/). Values below are formatted for readability.
+The full result of each query is in its exported CSV (`Q1_result.csv` to `Q5_result.csv`). The tables below summarize the MongoDB exports. Full results are available in the [before-index folder](mongodb_results/before_indexes/) and [after-index folder](mongodb_results/after_indexes/).
 
-### Q1 — Reviews per year (first five years)
+### Q1 — Reviews per year (27 rows; first years shown)
 
 | Year | Reviews | Avg rating | % 5-star | % 1-star |
 | --- | ---: | ---: | ---: | ---: |
@@ -95,9 +69,9 @@ The before- and after-index exports contain the same result values for every Mon
 | 2000 | 3,756 | 4.14 | 53.9 | 7.4 |
 | 2001 | 6,841 | 3.97 | 49.7 | 10.5 |
 
-Across all 27 years, this query includes **43,886,942 reviews** with usable dates and ratings.
+Remaining years are in `Q1_result.csv`.
 
-### Q2 — Price range vs. rating
+### Q2 — Price range vs. rating (products with 10+ ratings)
 
 | Price range | Products | Avg rating | % rated below 3.5 | Avg ratings per product |
 | --- | ---: | ---: | ---: | ---: |
@@ -106,18 +80,18 @@ Across all 27 years, this query includes **43,886,942 reviews** with usable date
 | $100 – $499 | 45,074 | 4.16 | 7.4 | 410 |
 | $500 and up | 10,682 | 4.20 | 6.1 | 167 |
 
-Products under $25 have the highest average rating and lowest low-rating percentage. Higher prices do not correspond to higher average ratings in these groups. The results match the SQL output, as discussed in the [Phase III(b) report](phase_3b_performance_comparison.md).
+Finding: higher prices do not bring higher ratings. Products under $25 have the highest average rating and the lowest share of poorly rated products, while $100–$499 products have the highest share.
 
-### Q3 — Most helpful reviews (top four; product names shortened)
+### Q3 — Most helpful reviews (15 rows; top 4 shown)
 
 | Product | Store | Rating | Helpful votes | Verified |
 | --- | --- | ---: | ---: | --- |
-| Fire Tablet with Alexa, 7-inch display | Amazon | 5.00 | 46,841 | Yes |
+| Fire Tablet with Alexa, 7" Display, 16 GB, Blue | Amazon | 5.00 | 46,841 | Yes |
 | Fire TV Stick with Alexa Voice Remote | Amazon | 5.00 | 32,948 | Yes |
 | Amazon Fire TV – 1st Generation | Amazon | 5.00 | 26,331 | Yes |
-| Kindle Wireless Reading Device | Amazon | 1.00 | 24,261 | Yes |
+| Kindle Wireless Reading Device (6" Display) | Amazon | 1.00 | 24,261 | Yes |
 
-The highest-voted reviews concern Amazon devices. The fourth review is a 1-star review, showing that critical reviews can also receive substantial helpful-vote support.
+Finding: the most helpful reviews in the category are about Amazon's own devices. The fourth is a 1-star warning about the Kindle, so critical reviews can earn as much trust as positive ones.
 
 ### Q4 — Verified vs. non-verified reviewers
 
@@ -126,9 +100,9 @@ The highest-voted reviews concern Amazon devices. The fourth review is a 1-star 
 | Verified buyer | 40,546,882 | 4.12 | 64.2 | 11.8 | 0.98 |
 | Not verified | 3,340,060 | 3.82 | 53.5 | 16.6 | 2.46 |
 
-Non-verified reviewers give lower average ratings and have a larger 1-star share. Their reviews receive approximately 2.5 times as many helpful votes on average.
+Finding: non-verified reviewers are harsher than verified buyers, with a lower average rating, fewer 5-star and more 1-star reviews, and their reviews receive about 2.5 times as many helpful votes.
 
-### Q5 — Most disappointing sub-categories (top five)
+### Q5 — Most disappointing sub-categories (15 rows; top 5 shown)
 
 | Category | Products | % rated below 3.5 | Avg rating | Avg price |
 | --- | ---: | ---: | ---: | ---: |
@@ -138,8 +112,8 @@ Non-verified reviewers give lower average ratings and have a larger 1-star share
 | DVD Players & Recorders | 1,228 | 39.4 | 3.60 | $181.12 |
 | Repeaters | 1,600 | 38.4 | 3.64 | $54.75 |
 
-Hidden Cameras has the largest low-rating percentage among the reported categories: 50.9% of qualifying product entries are rated below 3.5.
+Finding: about half of all hidden cameras with 10+ ratings are rated below 3.5.
 
-## Measurement Limits
+## Limits
 
-Each query was measured once per configuration, with the indexed run following the baseline and index creation. Cache effects and run-to-run variation were not isolated. The results establish the observed timings for this workload; repeated trials and execution plans would be needed to distinguish the optimizer's behavior from other influences on elapsed time.
+Single trials; uncontrolled cache state; no saved execution plans or spill statistics. Timing changes do not establish which access plan caused them. Cross-database results are compared in [Phase III(b)](phase_3b_performance_comparison.md).

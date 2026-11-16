@@ -5,47 +5,39 @@ Database: `amazon_electronics_reviews`.
 
 ## Functional Dependencies
 
-The Phase I model separates product metadata from individual reviews. A functional dependency means that one value, or combination of values, determines another value within a table.
+The primary keys in [schema.sql](../Phase%201/Create%20and%20Load%20Dataset/schema.sql) enforce these dependencies:
 
-| Table | Dependency | Explanation |
+| Table | Dependency |
+| --- | --- |
+| `products` | `parent_asin` → `title`, `average_rating`, `rating_number`, `price`, `main_category`, `store`, `categories`, `description`, `features`, `details` |
+| `reviews` | `(source_id, source_line)` → `parent_asin`, `user_id`, `asin`, `rating`, `title`, `review_text`, `reviewed_at`, `helpful_vote`, `verified_purchase` |
+
+Each key identifies one stored row; duplicate-key imports retain the existing row. Review line numbers can overlap across sources, so `source_line` alone is not the intended global key. A product key determines its metadata, not individual review ratings or text.
+
+We checked the first **100,000 nonblank review source records** using Phase I text cleaning. All had usable `asin` and `parent_asin` values; missing identifiers were excluded from each check.
+
+| Relationship | Sample result | Conclusion |
 | --- | --- | --- |
-| `products` | `parent_asin` → `title`, `average_rating`, `rating_number`, `price`, `main_category`, `store`, `categories`, `description`, `features`, `details` | The product primary key identifies one stored metadata row and therefore determines all its other fields. |
-| `reviews` | `(source_id, source_line)` → `parent_asin`, `user_id`, `asin`, `rating`, `title`, `review_text`, `reviewed_at`, `helpful_vote`, `verified_purchase` | The combined primary key identifies one review record by its source file and original line number. |
-
-These dependencies are enforced by the primary keys in [schema.sql](../Phase%201/Create%20and%20Load%20Dataset/schema.sql). The loader keeps the existing row when the same key appears again. Product titles, stores, and user identifiers are not declared unique. A product can have many reviews, so `parent_asin` does not determine an individual review's rating or text.
-
-We also checked the first **100,000 nonblank review source records**, using the Phase I text-cleaning rules and excluding missing identifiers from each check. All 100,000 records had usable `asin` and `parent_asin` values.
-
-| Relationship checked | Sample result | Interpretation |
-| --- | --- | --- |
-| `asin` → `parent_asin` | 66,260 distinct ASINs; none mapped to more than one parent. | The dependency holds in this sample. It is not enforced by the schema or established for the full dataset. |
-| `user_id` → `parent_asin` | 10,714 of the 15,322 distinct users reviewed more than one parent product. | This dependency does not hold. A reviewer can review several products. |
-
-The loader assigns the same `source_id` to this import. Although line numbers distinguish records within that file, the combined key also supports other sources whose line numbers may overlap. Uniqueness within one imported file does not establish `source_line` as a key across multiple sources.
+| `asin` → `parent_asin` | 66,260 distinct ASINs; zero mapped to multiple parents. | Holds in the sample; neither schema-enforced nor verified across the full dataset. |
+| `user_id` → `parent_asin` | 10,714 of 15,322 distinct users reviewed multiple parent products. | Does not hold. |
 
 ## Normalization
 
 ### First Normal Form (1NF)
 
-The scalar fields store one value per column, and the primary keys distinguish rows. However, `categories`, `description`, and `features` preserve lists, while `details` preserves an object inside a JSON column. MySQL stores each as one JSON value, but the contents remain nested or multivalued. The complete model therefore does not follow the traditional flattened 1NF design for those attributes.
-
-We kept these fields together because they describe the same product and preserve the source metadata without creating several additional tables. Q5 expands categories with `JSON_TABLE` when individual category entries are needed. A fully flattened alternative would use separate tables for category entries, descriptions, features, and detail attributes, linked by `parent_asin`. Entry positions could preserve array order and repeated values.
+Scalar columns contain single values. The JSON fields retain lists (`categories`, `description`, `features`) and an object (`details`), so the complete model does not follow traditional flattened 1NF. We preserve this product metadata together; Q5 expands categories with `JSON_TABLE`. A flattened alternative would use child tables linked by `parent_asin`, with entry positions preserving array order and duplicates.
 
 ### Second Normal Form (2NF)
 
-For the scalar part of `products`, the primary key has one field, so there is no proper subset of that key on which an attribute could partially depend. For `reviews`, the intended identity is the full `(source_id, source_line)` combination: the source identifies the file, and the line identifies the record within it. Review attributes are attached to that full identity. The model does not define a dependency from either key component alone to a non-key review attribute across multiple sources.
-
-This supports 2NF for the scalar relations under the stated key dependencies. It does not remove the separate 1NF limitation of the nested product JSON fields.
+Under the stated dependencies, the scalar relations meet 2NF. The product key is a single attribute. Review attributes depend on the full `(source_id, source_line)` identity; neither component alone identifies a review across sources. No partial dependency is defined. This assessment does not resolve the nested JSON fields' 1NF limitation.
 
 ### Third Normal Form (3NF) and BCNF
 
-Keeping product metadata in `products` avoids repeating titles, prices, and stores in every review. If those fields were stored in `reviews`, the review key would determine `parent_asin`, which would then determine the product metadata. Separating the tables avoids that transitive dependency and the need to update the same metadata in many review rows.
+Separating product metadata avoids the transitive dependency `review key` → `parent_asin` → `product metadata` within reviews. Under the documented dependencies, the scalar product relation meets 3NF and BCNF because its determinant is the product key.
 
-For the scalar product fields, the documented dependency has the product key as its determinant. Under that dependency set, the scalar product relation meets 3NF and BCNF. This is a statement about the identified dependencies, rather than proof that no additional business dependencies exist.
+If the sample-observed `asin` → `parent_asin` holds globally, reviews contain `review key` → `asin` → `parent_asin`. Under the declared keys, this violates 3NF and BCNF: `asin` is not a review key, and `parent_asin` is non-prime. A separate ASIN-to-parent table would remove that redundancy. The current model retains both identifiers for direct product joins.
 
-The sample observation `asin` → `parent_asin` needs separate attention in `reviews`. If it holds as a rule throughout the dataset, the review key determines `asin`, which determines `parent_asin`. Since `asin` is not a review key and `parent_asin` is not part of the declared key, this would violate 3NF and BCNF. A normalized alternative would keep an ASIN-to-parent mapping in a separate table and obtain the parent through that mapping. Our current design retains both identifiers in each review to support direct product joins.
-
-We therefore describe the model as separating product and review facts while intentionally retaining nested product metadata and both review identifiers. We do not claim that the entire schema is fully normalized or in BCNF; the JSON structure and the sample-observed ASIN dependency require these qualifications.
+We do not claim full-schema BCNF: nested JSON and the potential ASIN dependency qualify the normalization assessment.
 
 ## Timings Before and After Indexing
 
