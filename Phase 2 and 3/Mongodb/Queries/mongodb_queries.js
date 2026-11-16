@@ -13,9 +13,10 @@
 
 db = db.getSiblingDB("amazon_electronics_reviews");
 
-// MySQL ROUND on exact numeric values rounds half up; MongoDB
-// $round uses ties-to-even. All averages and percentages here are
-// nonnegative, so floor(value * scale + 0.5) matches SQL rounding.
+// Match MySQL's decimal rounding for our nonnegative results.
+// For example, rounding 4.25 to one decimal place gives 4.3 in MySQL.
+// MongoDB's $round gives 4.2 because ties use an even final digit.
+// This helper keeps averages and percentages consistent across databases.
 function sqlRound(value, places = 0) {
     const scale = NumberDecimal(String(10 ** places));
     return {
@@ -63,7 +64,8 @@ printjson(db.reviews.aggregate([
 
 // ------------------------------------------------------------
 // Q2: Do more expensive electronics get better ratings?
-// Products (10+ ratings) grouped into the same price ranges.
+// Products (10+ ratings) grouped into price ranges: average
+// rating, % rated below 3.5, and ratings per product.
 // ------------------------------------------------------------
 print("Q2: Price range vs. rating");
 printjson(db.products.aggregate([
@@ -104,10 +106,10 @@ printjson(db.products.aggregate([
 
 // ------------------------------------------------------------
 // Q3: What do the most helpful reviews look like?
-// $lookup joins reviews.parent_asin to products._id.
-// $unwind drops unmatched reviews, matching SQL's INNER JOIN.
-// Keep LIMIT after the join so unmatched reviews cannot use up
-// places in the top 15. $substrCP counts characters like LEFT.
+// The 15 reviews with the most helpful votes (1,000+), joined
+// with the product they are about. $lookup joins 
+// reviews.parent_asin to products._id. $unwind drops unmatched
+// reviews, matching SQL's INNER JOIN.
 // ------------------------------------------------------------
 print("Q3: Most helpful reviews");
 printjson(db.reviews.aggregate([
@@ -135,7 +137,7 @@ printjson(db.reviews.aggregate([
         review_title: { $cond: [
             { $eq: [{ $ifNull: ["$title", null] }, null] },
             null,
-            { $substrCP: ["$title", 0, 60] }
+            { $substrCP: ["$title", 0, 60] } // Truncate long titles to match SQL's LEFT(title, 60)
         ] }
     } }
 ], { allowDiskUse: true }).toArray());
@@ -143,7 +145,8 @@ printjson(db.reviews.aggregate([
 
 // ------------------------------------------------------------
 // Q4: Do verified buyers rate differently from non-verified
-// reviewers? Null helpful votes are ignored by AVG, as in SQL.
+// reviewers? Average rating, % 5-star, % 1-star, and average
+// helpful votes for each group.
 // ------------------------------------------------------------
 print("Q4: Verified vs. non-verified reviewers");
 printjson(db.reviews.aggregate([
@@ -175,8 +178,8 @@ printjson(db.reviews.aggregate([
 
 // ------------------------------------------------------------
 // Q5: Which sub-categories disappoint buyers the most?
-// $unwind expands categories like JSON_TABLE. Category entries
-// are counted separately, including repeated entries, as in SQL.
+// $unwind expands categories like JSON_TABLE, see SQL 
+// implementation for details.
 // ------------------------------------------------------------
 print("Q5: Most disappointing sub-categories");
 printjson(db.products.aggregate([
@@ -210,37 +213,29 @@ printjson(db.products.aggregate([
 
 // ============================================================
 // CREATE INDEXES
-// Same indexed fields as the SQL file. MongoDB's query planner
-// may choose different plans; verify with executionStats.
-// products._id already has a unique index for Q3's lookup.
+// Same indexed fields as the SQL file.
 // ============================================================
 
-// Q1: review timestamp and rating used by the yearly summary.
 db.reviews.createIndex(
     { reviewed_at: 1, rating: 1 },
     { name: "idx_reviews_time_rating" }
 );
 
-// Q2: price, average rating, and rating count.
 db.products.createIndex(
     { price: 1, average_rating: 1, rating_number: 1 },
     { name: "idx_products_price" }
 );
 
-// Q3: filter and descending scan by helpful votes.
 db.reviews.createIndex(
     { helpful_vote: 1 },
     { name: "idx_reviews_helpful" }
 );
 
-// Q4: purchase verification, rating, and helpful votes.
 db.reviews.createIndex(
     { verified_purchase: 1, rating: 1, helpful_vote: 1 },
     { name: "idx_reviews_verified" }
 );
 
-// Q5: filter products by rating count before expanding categories.
-// Most products may qualify, so the benefit can be small.
 db.products.createIndex(
     { rating_number: 1, average_rating: 1 },
     { name: "idx_products_rating_number" }
