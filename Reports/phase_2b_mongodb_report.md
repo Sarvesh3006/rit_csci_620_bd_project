@@ -1,6 +1,6 @@
 # Phase III(a) - MongoDB Aggregation Queries, Indexes and Timings
 
-## Query Design
+We created two collections in MongoDB containing the 2023 Electronic Amazon Reviews dataset. This gave us **1610012 products** and **43886944 reviews**.
 
 | Query | What it does | Pipeline stages |
 | --- | --- | --- |
@@ -10,13 +10,13 @@
 | Q4 - Verified reviewers | Takes reviews with a known verified status and rating, and compares counts, ratings, star shares and helpful votes. | $match → $group → $sort → $project |
 | Q5 - Disappointing categories | Takes products with a rating and at least 10 ratings, splits the categories list, drops "Electronics" and empty ones, keeps categories with at least 1,000 products and returns the top 15 by share of low ratings. | $match → $unwind → $match → $group → $match → $project → $sort → $limit |
 
-Q1 covers the four required stages ($match, $group, $project, $sort). Q3 is the join: $lookup brings in the product for each review, and $unwind drops any review that had no matching product before the limit. Q5 works on the categories array stored inside each product, and like JSON_TABLE in SQL it counts each category entry on its own. In Q3, product titles are cut to 50 characters and review titles to 60.
+We represented each product by one document in the `products` collection. The field named `_id` contains the clean `parent_asin` value from the original data.
 
 ## Timings Before and After Indexes
 
 Each query was run once before and once after adding the five indexes. The time is measured from calling aggregate() until toArray() finishes, and doesn't include saving the results to a file. It is not the executionTimeMillis from explain. All pipelines run with allowDiskUse: true.
 
-Before adding our indexes, the only indexes were _id_ on both collections and reviews_parent_asin on reviews. The raw numbers are in the [before timings](mongodb_results/before_indexes/timings.csv), [after timings](mongodb_results/after_indexes/timings.csv) and [comparison](mongodb_results/comparison.csv) files. The seconds below are rounded.
+Also, the review from the source is represented by one document in the `reviews` collection. Equivalent to the primary keys we have in MySQL, in MongoDB we have `_id` field with an embedded document where `source_id` and `source_line` are combined.
 
 | Query | Question | Index | Before | After |
 | --- | --- | --- | --- | --- |
@@ -89,25 +89,20 @@ Paying more doesn't get you a better rated product. The cheapest group (under $2
 
 All of the top reviews are on Amazon's own products. The 4th one is a 1-star review warning people about the Kindle, so people find bad reviews just as useful as good ones.
 
-### Q4 - Verified vs. non-verified reviewers
+If optional fields are missing or invalid, it produces null values. If the array of document is valid and empty, it is left as null. The fields like images, videos, author, subtitle and bought_together are not included as in phase I.
 
 | Reviewer | Reviews | Avg rating | % 5-star | % 1-star | Avg helpful votes |
 | --- | --- | --- | --- | --- | --- |
 | Verified buyer | 40,546,882 | 4.12 | 64.2 | 11.8 | 0.98 |
 | Not verified | 3,340,060 | 3.82 | 53.5 | 16.6 | 2.46 |
 
-Non-verified reviewers are harsher than verified buyers. They give a lower average, fewer 5-stars and more 1-stars, and their reviews get about 2.5 times more helpful votes.
+We embedded arrays and details within the product collection as they describe the same product. There can be many reviews per product, so we kept reviews separately. Document size can exceed the 16MiB limit if all reviews are nested within product documents. So by having separate reviews, and referencing products via `parent_asin`, we avoid duplicating information.
 
-### Q5 - Most disappointing sub-categories
+The schema specifies the data type of each field, primary keys, and indexes. Using PyMongo, the data was loaded by applying the same cleaning methods as phase I. Reviews were batched in 5000 lines, and products were loaded before reviews. Duplicate entries from reruns were skipped. Clean-up was performed. This checked foreign keys in products. 43886944 reviews were checked. 0 had un-matched foreign keys. 0 entries were removed.
+The data type of each field, primary keys, and indexes are specified by the schema. The cleaning functions from phase I are used by PyMango loader to read the JSONL files in batches of 5000 and loads products before reviews. We skip duplicate entries from reruns. After loading, we perform clean-up to check product references. We checked 43886944 reviews. 0 had un-matched foreign keys. 0 entries were removed.
 
 15 rows in total, these are the top 5.
 
-| Category | Products | % rated below 3.5 | Avg rating | Avg price |
-| --- | --- | --- | --- | --- |
-| Hidden Cameras | 1,752 | 50.9 | 3.52 | $71.16 |
-| Audio Docks | 1,012 | 46.2 | 3.52 | $101.51 |
-| MP3 & MP4 Players | 3,175 | 41.6 | 3.56 | $133.75 |
-| DVD Players & Recorders | 1,228 | 39.4 | 3.60 | $181.12 |
-| Repeaters | 1,600 | 38.4 | 3.64 | $54.75 |
+In MySQL, we used two tables. The product key is `parent_asin`, and the review key combines `source_id` and `source_line`. In MongoDB, we used the same keys in the `_id` fields of the two collections. We kept the nested product information in JSON columns in MySQL and in BSON arrays and embedded documents in MongoDB. MySQL defines data types in the table columns, and our MongoDB schema checks field types when documents are inserted or updated. After loading the data, we check the product references during cleanup.
 
-Hidden cameras are the worst, around half of the ones with 10+ ratings are rated below 3.5.
+MongoDB automatically creates a unique index on `_id` in each collection. We also added the `reviews_parent_asin` index on `reviews.parent_asin` so we can quickly find reviews for a product. When a query needs both review data and product details, we can join them in MySQL with a SQL join and in MongoDB with `$lookup`. We can also use `$unwind` in MongoDB to work with each category in a product's category array. In Phase III, we will compare how long the equivalent queries take in both databases.
