@@ -2,7 +2,7 @@
 
 ## Result Validation
 
-Both implementations use matching thresholds, UTC years, and rounding rules. SQL joins to `products.parent_asin`; MongoDB joins to `products._id`. Category expansion uses SQL `JSON_TABLE` and MongoDB `$unwind`.
+For both implementations, we used matching thresholds, UTC years, and rounding rules. SQL joins to `products.parent_asin`; MongoDB joins to `products._id`. For category expansion, we used SQL `JSON_TABLE` and MongoDB `$unwind`.
 
 | Query | Rows per database | CSV results across databases | Before vs. after in each database |
 | --- | ---: | --- | --- |
@@ -12,11 +12,11 @@ Both implementations use matching thresholds, UTC years, and rounding rules. SQL
 | Q4 — Verified reviewers | 2 | Match | Match |
 | Q5 — Categories | 15 | Match | Match |
 
-Comparison normalizes numeric formatting and Boolean values (`1`/`0` versus `true`/`false`) and ignores row order. Sources: SQL [before](sql_results/before_indexes/) / [after](sql_results/after_indexes/); MongoDB [before](mongodb_results/before_indexes/) / [after](mongodb_results/after_indexes/).
+For comparison, we normalized numeric formatting and Boolean values (`1`/`0` versus `true`/`false`) and ignored row order. Sources: SQL [before](sql_results/before_indexes/) / [after](sql_results/after_indexes/); MongoDB [before](mongodb_results/before_indexes/) / [after](mongodb_results/after_indexes/).
 
 ## Measurement Method
 
-One execution per query per configuration. Times include client execution and result retrieval, excluding file export: MySQL `execute()` through `fetchall()`; MongoDB `aggregate()` through `toArray()`. Sources: [SQL comparison](sql_results/comparison.csv), [MongoDB comparison](mongodb_results/comparison.csv), and [SQL](sql_results/after_indexes/run_info.json) / [MongoDB](mongodb_results/after_indexes/run_info.json) metadata. Seconds are rounded; ratios use the original milliseconds.
+We ran each query once per configuration. In MySQL, we measured the time from `execute()` through `fetchall()`. In MongoDB, we measured from `aggregate()` through `toArray()`. Sources: [SQL comparison](sql_results/comparison.csv), [MongoDB comparison](mongodb_results/comparison.csv), and [SQL](sql_results/after_indexes/run_info.json) / [MongoDB](mongodb_results/after_indexes/run_info.json) metadata. Seconds are rounded and we use the original milliseconds for ratios.
 
 | Database | Baseline indexes | Added workload indexes |
 | --- | --- | --- |
@@ -45,7 +45,7 @@ Time advantage = slower time / faster time. MySQL led on review queries; MongoDB
 | Q4 — Verified reviewers | 20.384 s | 28.682 s | MySQL | 1.41× |
 | Q5 — Categories | 32.561 s | 11.495 s | MongoDB | 2.83× |
 
-MySQL led on **four of five** queries. MongoDB led on Q5. Q3's relative difference was 1.58×, but its absolute difference was only **8.457 ms**.
+MySQL was faster on **four of the five queries** after indexing. MongoDB still finished Q5 faster. For Q3, the 1.58× ratio came from a difference of just **8.457 ms**.
 
 ## Indexing Effect
 
@@ -59,7 +59,7 @@ Speedup = before time / after time; below 1 indicates a slowdown.
 | Q4 | 1.33× | 2.94× | Both improve; broad review aggregation remains. |
 | Q5 | 1.05× | 0.68× | MongoDB slows by 47.2%, but remains faster than MySQL. Array/JSON expansion, grouping, and sorting remain. |
 
-These interpretations describe intended index benefits; no saved execution plans establish the actual access paths. MongoDB's category-array pipeline outperformed SQL's JSON expansion in both configurations; the timings do not isolate the cause.
+These interpretations describe intended index benefits but no saved execution plans establish the actual access paths. MongoDB's category-array pipeline outperformed SQL's JSON expansion in both configurations, the timings do not isolate the cause.
 
 ## Index Construction
 
@@ -74,7 +74,7 @@ Sources: [MySQL](sql_results/after_indexes/index_build_times.csv) and [MongoDB](
 | `idx_products_rating_number` | 9.90 s | 7.14 s |
 | **Total** | **364.57 s** | **277.98 s** |
 
-MySQL's total construction time was **1.31×** MongoDB's. Review indexes dominated construction time in both systems.
+MySQL took **1.31×** times longer than MongoDB. In both databases, most of that time went constructing review indexes.
 
 ## Combined Query Time
 
@@ -83,8 +83,8 @@ MySQL's total construction time was **1.31×** MongoDB's. Review indexes dominat
 | Before workload indexes | 128.933 s | 241.793 s |
 | After workload indexes | 70.734 s | 59.303 s |
 
-MongoDB's indexed total was **1.19× faster**. Its large Q5 advantage outweighed its losses on Q1–Q4. These sums represent one execution of each query and exclude index construction; changing query frequencies could change the overall winner.
+After indexing, MySQL took **1.19×** times longer than MongoDB to run all five queries. MongoDB's large advantage on Q5 outweighed its losses on Q1–Q4. These totals include one run of each query but excludes construction of index. Running some queries more often can change overall winner.
 
 ## Limits
 
-Single trials and uncontrolled cache state; different clients and drivers; no complete server/hardware configuration record, execution plans, or resource measurements. Results describe these runs, not a general ranking of MySQL and MongoDB.
+We ran each query once per configuration and did not control the cache state. We used different clients and drivers for the two databases. We also did not record the full hardware and server setup or measure resource usage. These results describe how MySQL and MongoDB performed on our five queries under the conditions of this test.
